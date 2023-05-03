@@ -44,3 +44,4 @@ for i in range(1000):
     results.append(steps)
 
 print(N, sum(results) / len(results))
+# 300 17.824
