@@ -2,15 +2,15 @@ import networkx as nx
 import random
 import matplotlib.pyplot as plt
 
-N = 50
+N = 300
 results = []
 
 # Ustvarimo omrezje povezav
-G = nx.gnp_random_graph(N, 0.2)
-# G = nx.random_tree(N)
-#G = nx.random_powerlaw_tree(N)
+G = nx.gnp_random_graph(N, 0.2) ## KONVERGIRA
+#G = nx.random_tree(N) ## NE KONVERGIRA
+#G = nx.random_powerlaw_tree(N) ## NE KONVERGIRA
 
-for i in range(1):
+for i in range(1000):
     opinions = [] # source agent je index 0
     sum_memory = [-1] * N
 
@@ -33,16 +33,17 @@ for i in range(1):
    # for i in range(10):
         for ix in range(1,len(opinions)):
             sum1 = 0
-            for neighbor in G.neighbors(ix):
-                sum1+= opinions[neighbor]
+            neighbor_list = [n for n in G.neighbors(ix)]
+            number_of_neighbors = len(neighbor_list)
 
-            if steps == 0:
-                number_of_neighbors = len([n for n in G.neighbors(ix)])
-                if sum1 / number_of_neighbors >= 0.5: # prvi korak se nastavi mnenje na povprečno mnenje
-                    opinions[ix] = 1
-                else:
-                    opinions[ix] = 0
-            else:
+            sample = set(neighbor_list)
+            sample1 = set(random.sample(sample, int(number_of_neighbors/2)))
+            sample2 = sample - sample1
+
+            sum1 = sum([opinions[i] for i in list(sample1)])
+            sum2 = sum([opinions[i] for i in list(sample2)])
+
+            if steps != 0:
                 if sum1 > sum_memory[ix]:
                     opinions[ix] = 1
                 elif sum1 < sum_memory[ix]:
@@ -62,9 +63,14 @@ for i in range(1):
         #nx.draw(G, node_color=node_colors)
         #plt.show()
         steps += 1
+        if opinions_sum == 0 and opinions[0] == 1 or opinions_sum == N and opinions[0] == 0:
+            print("CRKNE")
+            exit(0)
         if opinions_sum == 0 or opinions_sum == N:
             break
     print("Finished in " + str(steps) + " steps.")
     results.append(steps)
 
 print(N, sum(results) / len(results))
+# 50 8.32
+# 300 4.453

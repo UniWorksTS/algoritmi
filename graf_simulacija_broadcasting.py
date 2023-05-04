@@ -2,6 +2,8 @@ import networkx as nx
 import random
 import matplotlib.pyplot as plt
 
+# TO NI NIC PAMETNEGA!
+
 N = 50
 results = []
 #PRAVO MNENJE JE 1!
